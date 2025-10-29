@@ -1,0 +1,29 @@
+[package]
+name = "qs-crypto"
+version = "0.2.0"
+edition = "2021"
+
+[features]
+default = ["pq"]        # PQ by default (we'll use ed25519 while PQ compiles)
+pq = ["pqcrypto-dilithium", "pqcrypto-traits"]
+ed25519 = ["ed25519-dalek"]
+
+[dependencies]
+# PQ (optional behind the "pq" feature)
+pqcrypto-dilithium = { version = "=0.5.0", optional = true }
+pqcrypto-traits    = { version = "0.3",   optional = true }
+
+# Ed25519 fallback (optional)
+ed25519-dalek = { version = "2", optional = true, features = ["rand_core"] }
+
+# common
+sha3 = "0.10"
+hex  = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+aead = "0.5"
+aes-gcm = "0.10"
+argon2 = "0.5"
+rand = "0.8"
+zeroize = "1"
+base64 = "0.22"

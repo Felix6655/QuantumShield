@@ -1,0 +1,22 @@
+# QuantumShield AI Playbook
+
+- This repo is a Next.js App Router prototype for a post-quantum wallet; all user-facing code lives in `app/**`.
+- `app/layout.tsx` defines the HTML shell, metadata, and the dark theme palette (`bg-[#0b0b12]`, `border-[#3b3b55]`, `text-[#e6e6f0]`); match these colors when adding UI.
+- Landing page `app/page.tsx` is a static server component that just links to `/wallet`; keep it minimal and server-rendered.
+- `app/wallet/page.tsx` is the main client component (`"use client"`) handling state for public/private keys, loading (`busy`), and user messaging (`note`).
+- `generateKeys()` POSTs to `/api/keys`, optimistically clears prior keys, and surfaces API errors through the `note` state; preserve this flow so the UI reliably resets on regeneration.
+- Private key downloads rely on the in-browser `Blob`/`URL.createObjectURL` flow; reuse this helper when adding other download actions.
+- The wallet UI assumes base64 strings and uses `break-all` to wrap long sequences; include similar handling for any new key material or ciphertext so it remains readable.
+- API handler `app/api/keys/route.ts` is a dev stub producing Kyber-sized buffers via Node `crypto.randomBytes` and returning `{ scheme, provider, publicKey, privateKey, warning }`.
+- Maintain the response contract (field names, base64 encoding, warning message) when swapping in a real KEM so the client continues to function without changes.
+- The route currently returns deterministic buffer lengths (1184 / 2400 bytes) to mirror Kyber768; adjust the UI copy if you change sizes to avoid misleading users.
+- There is no persistence layer; every call is stateless and side-effect free—avoid adding server mutations unless you also design storage and security.
+- Styling uses Tailwind-style utility class strings directly in JSX, but there is no shared stylesheet—extend components by composing these utilities rather than adding global CSS.
+- No global store is present; prefer local `useState` hooks or lift state into new client components instead of introducing Redux/context unless justified.
+- Input validation and error handling happen in the client; if you add server-side validation, surface details via the existing `warning`/`error` fields for continuity.
+- Developer workflow: the repo is missing `package.json`; initialize one (`npm init -y`) and install `next`, `react`, and `react-dom` before running `npm run dev`.
+- After installing dependencies, use `npm run dev` to start the dev server (defaults to http://localhost:3000) and manually exercise `/wallet` to verify flows.
+- There are no automated tests or lint rules checked in; the fastest smoke test is hitting the `/wallet` page and generating keys.
+- When adding new API routes, stick to the Next.js App Router pattern (`export async function POST`) and return via `NextResponse.json`.
+- Client components should guard against missing data (like the existing `if (!priv) return;` checks) to avoid runtime crashes during async fetches.
+- Document any cryptographic changes inline (both server and client) so future replacements know whether the implementation is real or still a stub.

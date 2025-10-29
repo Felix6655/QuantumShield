@@ -1,0 +1,18 @@
+[ [bin] ]
+name = "qs_wallet"
+path = "src/main.rs"
+[ [bin] ]
+name = "qs_wallet"
+path = "src/main.rs"
+
+[ [bin] ]
+name = "qs_server"
+path = "src/server.rs"
+[workspace]
+members = [
+    "crates/qs-crypto",
+    "crates/qs-wallet-cli",
+    "crates/qs-utils",
+    "crates/qs-walletd", "quantum-shield/qs_wallet",   # 👈 add this line
+]
+resolver = "2"
